@@ -1,19 +1,108 @@
----
-feature_name: Vibration API
-chrome_version: 32
-feature_id: 5698768766763008
----
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Vibration API – All Demos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      max-width: 800px;
+      margin: 1.5rem auto;
+      padding: 0 1rem;
+      line-height: 1.5;
+    }
+    h1, h2 {
+      font-weight: 600;
+    }
+    section {
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      margin: 0.25rem 0;
+      font-size: 1rem;
+      border-radius: 4px;
+      border: 1px solid #888;
+      background: #f5f5f5;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #e9e9e9;
+    }
+    input[type="text"] {
+      width: 100%;
+      max-width: 100%;
+      padding: 0.4rem 0.5rem;
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+    }
+    code {
+      background: #f3f3f3;
+      padding: 0.1rem 0.3rem;
+      border-radius: 3px;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Vibration API Demos</h1>
+  <p>
+    Test the Vibration API demos on a supported Android device.
+    The functions mirror the original Chrome sample plus a custom pattern tester. [web:5][web:6]
+  </p>
 
-<p>You can control the vibration capability of your device using the Vibration API. Chrome only supports this feature on Android devices.</p>
+  <section>
+    <h2>Demo 1 – Simple vibration</h2>
+    <p>Vibrate for 500 ms using an array with a single value.</p>
+    <button onclick="example1()">Vibrate (demo1)</button>
+  </section>
 
-{% include js_snippet.html filename='demo1.js' %}
-<div><button onclick="example1()">Vibrate</button></div>
+  <section>
+    <h2>Demo 2 – Simple vibration (number)</h2>
+    <p>Vibrate for 500 ms using a single numeric value.</p>
+    <button onclick="example2()">Vibrate (demo2)</button>
+  </section>
 
-{% include js_snippet.html filename='demo2.js' %}
-<div><button onclick="example2()">Vibrate</button></div>
+  <section>
+    <h2>Demo 3 – Fixed pattern</h2>
+    <p>Vibrate for 500 ms six times, pausing 250 ms between each one.</p>
+    <button onclick="startPattern()">Play pattern (demo3)</button>
+  </section>
 
-{% include js_snippet.html filename='demo3.js' %}
-<div><button onclick="startPattern()">Play pattern</button></div>
+  <section>
+    <h2>Demo 4 – Stop vibrations</h2>
+    <p>Stop any current vibration immediately.</p>
+    <button onclick="stopVibrations()">Stop vibrations (demo4)</button>
+  </section>
 
-{% include js_snippet.html filename='demo4.js' %}
-<div><button onclick="stopVibrations()">Stop vibrations</button></div>
+  <section>
+    <h2>Demo 5 – Custom pattern</h2>
+    <p>
+      Enter your own pattern as comma‑separated values or a JSON array, then play it.
+      Example: <code>250, 100, 250, 100, 400</code> or <code>[250, 100, 250, 100, 400]</code>.
+    </p>
+    <input
+      id="patternInput"
+      type="text"
+      placeholder="250, 100, 250, 100, 400"
+    />
+    <div>
+      <button onclick="playCustomPattern()">Play custom pattern (demo5)</button>
+      <button onclick="stopVibrations()">Stop vibrations</button>
+    </div>
+  </section>
+
+  <!-- Original demos -->
+  <script src="demo1.js"></script>
+  <script src="demo2.js"></script>
+  <script src="demo3.js"></script>
+  <script src="demo4.js"></script>
+
+  <!-- Your new custom pattern demo -->
+  <script src="demo5.js"></script>
+</body>
+</html>
