@@ -1,102 +1,78 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Vibration APIs</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Video + Vibration Timeline (MVP)</title>
   <style>
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      max-width: 800px;
-      margin: 1.5rem auto;
-      padding: 0 1rem;
-      line-height: 1.5;
-    }
-    h1, h2 {
-      font-weight: 600;
-    }
-    section {
-      margin-bottom: 1.5rem;
-      padding: 1rem;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-    }
-    button {
-      padding: 0.5rem 1rem;
-      margin: 0.25rem 0;
-      font-size: 1rem;
-      border-radius: 4px;
-      border: 1px solid #888;
-      background: #f5f5f5;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #e9e9e9;
-    }
-    input[type="text"] {
-      width: 100%;
-      max-width: 100%;
-      padding: 0.4rem 0.5rem;
-      font-size: 0.95rem;
-      margin-bottom: 0.5rem;
-    }
-    code {
-      background: #f3f3f3;
-      padding: 0.1rem 0.3rem;
-      border-radius: 3px;
-      font-size: 0.9rem;
-    }
+    body { font-family: system-ui, sans-serif; max-width: 980px; margin: 16px auto; padding: 0 12px; }
+    .row { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    video { width: 100%; max-height: 55vh; background: #111; border-radius: 8px; }
+    .panel { border: 1px solid #ddd; border-radius: 8px; padding: 12px; }
+    .controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    input[type="text"] { width: min(520px, 100%); padding: 8px; }
+    input[type="range"] { width: 100%; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border-bottom: 1px solid #eee; padding: 8px; text-align: left; }
+    button { padding: 8px 10px; }
+    code, pre { background: #f5f5f5; border-radius: 6px; }
+    pre { padding: 10px; overflow: auto; }
+    .small { font-size: 12px; color: #444; }
   </style>
 </head>
 <body>
-  <h1>Vibration API Demos</h1>
-  <p>
-    Test the Vibration API demos on a supported Android device.
-  </p>
+  <h1>Video + Vibration Timeline (MVP)</h1>
 
-  <section>
-    <h2>Demo 1 – Simple vibration</h2>
-    <p>Vibrate for 500 ms using an array with a single value.</p>
-    <button onclick="example1()">Vibrate (demo1)</button>
-  </section>
+  <div class="row">
+    <div class="panel">
+      <div class="controls">
+        <input id="videoFile" type="file" accept="video/*" />
+        <button id="armVibrationBtn">Enable vibration</button>
+        <span id="supportText" class="small"></span>
+      </div>
 
+      <video id="video" playsinline></video>
 
-  <section>
-    <h2>Demo 3 – Fixed pattern</h2>
-    <p>Vibrate for 500 ms six times, pausing 250 ms between each one.</p>
-    <button onclick="startPattern()">Play pattern (demo3)</button>
-  </section>
-
-  <section>
-    <h2>Demo 4 – Stop vibrations</h2>
-    <p>Stop any current vibration immediately.</p>
-    <button onclick="stopVibrations()">Stop vibrations (demo4)</button>
-  </section>
-
-  <section>
-    <h2>Demo 5 – Custom pattern</h2>
-    <p>
-      Enter your own pattern as comma‑separated values or a JSON array, then play it.
-      Example: <code>250, 100, 250, 100, 400</code> or <code>[250, 100, 250, 100, 400]</code>.
-    </p>
-    <input
-      id="patternInput"
-      type="text"
-      placeholder="250, 100, 250, 100, 400"
-    />
-    <div>
-      <button onclick="playCustomPattern()">Play custom pattern (demo5)</button>
-      <button onclick="stopVibrations()">Stop vibrations</button>
+      <div style="margin-top:10px;">
+        <input id="seek" type="range" min="0" max="0" value="0" step="0.001" />
+        <div class="small">
+          Time: <span id="timeText">0.000</span>s / <span id="durText">0.000</span>s
+        </div>
+        <div class="controls" style="margin-top:8px;">
+          <button id="playBtn">Play/Pause</button>
+          <button id="stopBtn">Stop vibration</button>
+        </div>
+      </div>
     </div>
-  </section>
 
-  <!-- Original demos -->
-  <script src="demo1.js"></script>
-  <script src="demo2.js"></script>
-  <script src="demo3.js"></script>
-  <script src="demo4.js"></script>
+    <div class="panel">
+      <h2>Create vibration event</h2>
+      <div class="controls">
+        <button id="addEventBtn">Add at current time</button>
+        <input id="patternInput" type="text" placeholder="e.g. 250, 100, 250, 100, 400 OR [250,100,250]" />
+        <button id="previewBtn">Preview pattern</button>
+      </div>
+      <div class="small">
+        Pattern uses alternating vibration/pause durations in ms. [web:1]
+      </div>
 
-  <!-- Your new custom pattern demo -->
-  <script src="demo5.js"></script>
+      <h2 style="margin-top:14px;">Events</h2>
+      <table>
+        <thead>
+          <tr><th>t (s)</th><th>pattern (ms)</th><th>actions</th></tr>
+        </thead>
+        <tbody id="eventsTable"></tbody>
+      </table>
+
+      <h2 style="margin-top:14px;">Export</h2>
+      <div class="controls">
+        <button id="exportJsonBtn">Export JSON</button>
+        <button id="exportVibrateBtn">Export navigator.vibrate([...])</button>
+      </div>
+      <pre id="exportOut"></pre>
+    </div>
+  </div>
+
+  <script src="demoVibeVideo.js"></script>
 </body>
 </html>
