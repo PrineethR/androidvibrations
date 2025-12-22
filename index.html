@@ -3,76 +3,72 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Video + Vibration Timeline (MVP)</title>
+  <title>Vibe DAW (Video + Haptics)</title>
   <style>
-    body { font-family: system-ui, sans-serif; max-width: 980px; margin: 16px auto; padding: 0 12px; }
-    .row { display: grid; grid-template-columns: 1fr; gap: 12px; }
-    video { width: 100%; max-height: 55vh; background: #111; border-radius: 8px; }
-    .panel { border: 1px solid #ddd; border-radius: 8px; padding: 12px; }
-    .controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-    input[type="text"] { width: min(520px, 100%); padding: 8px; }
-    input[type="range"] { width: 100%; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { border-bottom: 1px solid #eee; padding: 8px; text-align: left; }
+    body { font-family: system-ui, sans-serif; max-width: 1100px; margin: 16px auto; padding: 0 12px; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    video { width: 100%; background:#111; border-radius: 10px; max-height: 55vh; }
+    .panel { border: 1px solid #ddd; border-radius: 10px; padding: 12px; }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
     button { padding: 8px 10px; }
-    code, pre { background: #f5f5f5; border-radius: 6px; }
-    pre { padding: 10px; overflow: auto; }
+    input[type="text"] { padding: 8px; width: min(540px, 100%); }
+    canvas { width: 100%; height: 160px; background: #0f1220; border-radius: 10px; touch-action: none; }
     .small { font-size: 12px; color: #444; }
+    pre { background:#f5f5f5; border-radius: 8px; padding: 10px; overflow:auto; }
+    label { display:flex; gap:6px; align-items:center; }
   </style>
 </head>
 <body>
-  <h1>Video + Vibration Timeline (MVP)</h1>
+  <h1>Vibe DAW</h1>
 
-  <div class="row">
+  <div class="grid">
     <div class="panel">
-      <div class="controls">
+      <div class="row">
         <input id="videoFile" type="file" accept="video/*" />
-        <button id="armVibrationBtn">Enable vibration</button>
-        <span id="supportText" class="small"></span>
+        <button id="armBtn">Enable vibration</button>
+        <button id="playBtn">Play/Pause</button>
+        <button id="stopVibeBtn">Stop vibration</button>
+        <span id="support" class="small"></span>
       </div>
 
       <video id="video" playsinline></video>
 
-      <div style="margin-top:10px;">
-        <input id="seek" type="range" min="0" max="0" value="0" step="0.001" />
-        <div class="small">
-          Time: <span id="timeText">0.000</span>s / <span id="durText">0.000</span>s
-        </div>
-        <div class="controls" style="margin-top:8px;">
-          <button id="playBtn">Play/Pause</button>
-          <button id="stopBtn">Stop vibration</button>
-        </div>
+      <div class="small" style="margin-top:6px;">
+        Video time: <span id="tNow">0.000</span>s / <span id="tDur">0.000</span>s
       </div>
     </div>
 
     <div class="panel">
-      <h2>Create vibration event</h2>
-      <div class="controls">
-        <button id="addEventBtn">Add at current time</button>
-        <input id="patternInput" type="text" placeholder="e.g. 250, 100, 250, 100, 400 OR [250,100,250]" />
-        <button id="previewBtn">Preview pattern</button>
+      <h2>Timeline</h2>
+      <div class="row">
+        <label><input id="snap" type="checkbox" checked /> Snap 0.1s</label>
+        <button id="zoomIn">Zoom +</button>
+        <button id="zoomOut">Zoom −</button>
+        <button id="clearAll">Clear</button>
       </div>
+
+      <canvas id="tl" width="1200" height="160"></canvas>
       <div class="small">
-        Pattern uses alternating vibration/pause durations in ms. [web:1]
+        Tap/click empty space to create a clip at that time. Drag clip to move. Drag right edge to resize. Press Delete to remove selected.
       </div>
 
-      <h2 style="margin-top:14px;">Events</h2>
-      <table>
-        <thead>
-          <tr><th>t (s)</th><th>pattern (ms)</th><th>actions</th></tr>
-        </thead>
-        <tbody id="eventsTable"></tbody>
-      </table>
-
-      <h2 style="margin-top:14px;">Export</h2>
-      <div class="controls">
-        <button id="exportJsonBtn">Export JSON</button>
-        <button id="exportVibrateBtn">Export navigator.vibrate([...])</button>
+      <h2 style="margin-top:12px;">Clip pattern</h2>
+      <div class="row">
+        <input id="pattern" type="text" placeholder="250, 100, 250, 100, 400 (or JSON array)" />
+        <button id="applyPattern">Apply to selected</button>
+        <button id="previewPattern">Preview selected</button>
       </div>
-      <pre id="exportOut"></pre>
+      <div class="small">Patterns are passed to <code>navigator.vibrate([...])</code> in ms. [web:1]</div>
+
+      <h2 style="margin-top:12px;">Export</h2>
+      <div class="row">
+        <button id="exportJson">Export JSON</button>
+        <button id="exportVibrate">Export navigator.vibrate([...])</button>
+      </div>
+      <pre id="out"></pre>
     </div>
   </div>
 
-  <script src="demoVibeVideo.js"></script>
+  <script src="daw.js"></script>
 </body>
 </html>
